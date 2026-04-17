@@ -57,5 +57,5 @@ COPY artifacts/      ./artifacts/
 # Expose ports: FastAPI (8000) & Frontend server (3000)
 EXPOSE 8000 3000
 
-# Default: launch the FastAPI prediction server
-CMD ["uvicorn", "deploy:app", "--host", "0.0.0.0", "--port", "8000"]
+# Default: launch both the Frontend server (bg) and FastAPI prediction server (fg)
+CMD ["bash", "-c", "python server.py & uvicorn deploy:app --host 0.0.0.0 --port 8000"]
