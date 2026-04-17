@@ -1,0 +1,127 @@
+# Python dependencies for E-commerce Churn Prediction ML Pipeline
+# Organization: Data Processing | ML/DL | MLOps | Serving | Cloud | Development
+
+# ================================
+# Core Data Processing & Analysis
+# ================================
+pandas
+numpy
+scipy
+polars  # Fast alternative to pandas
+scikit-learn
+
+# ================================
+# ML & Deep Learning Frameworks
+# ================================
+xgboost
+lightgbm
+optuna
+shap
+imbalanced-learn  # SMOTE for class imbalance
+
+# ================================
+# MLOps & Experiment Tracking
+# ================================
+mlflow
+wandb
+pydantic
+pydantic-settings
+
+# ================================
+# API & Web Framework
+# ================================
+fastapi
+uvicorn
+python-multipart
+httpx
+
+# ================================
+# Databases & Data Sources
+# ================================
+psycopg2-binary
+mysql-connector-python
+sqlalchemy
+alembic
+
+# ================================
+# Streaming & Message Brokers
+# ================================
+kafka-python-ng
+confluent-kafka
+redis
+
+# ================================
+# Feature Store & Caching
+# ================================
+feast
+
+# ================================
+# Cloud & AWS Integration
+# ================================
+# boto3, botocore, and s3fs are removed to let awswrangler resolve them
+awswrangler
+
+# ================================
+# Data Quality & Validation
+# ================================
+great-expectations
+pandera
+jsonschema
+
+# ================================
+# Monitoring, Logging & Alerting
+# ================================
+prometheus-client
+python-json-logger
+structlog
+watchtower  # CloudWatch integration
+
+# ================================
+# Data Drift Detection
+# ================================
+river  # Replaces scikit-multiflow (abandoned, no Py3.11 support)
+alibi-detect  # 0.11.0 numba dep requires Py<3.11
+
+# ================================
+# Utilities & Configuration
+# ================================
+pyyaml
+python-dotenv
+requests
+click
+tqdm
+
+# ================================
+# Testing & Mocking
+# ================================
+pytest
+pytest-cov
+pytest-asyncio
+pytest-mock
+moto  # AWS Mocking
+responses  # HTTP mocking
+
+# ================================
+# Code Quality & Linting
+# ================================
+black
+flake8
+isort
+mypy
+pylint
+
+# ================================
+# Development & Jupyter
+# ================================
+ipython
+jupyter
+notebook
+jupyterlab
+nbconvert
+
+# ================================
+# Visualization (Optional)
+# ================================
+matplotlib
+seaborn
+plotly

@@ -1,0 +1,10 @@
+artifact_location: file:C:/Users/kaush/OneDrive/Documents/GitHub/New_Churn/mlruns/475684885812280313/models/m-ef8f4af30d6a44af98ab77b8147798d6/artifacts
+creation_timestamp: 1775061163999
+experiment_id: '475684885812280313'
+last_updated_timestamp: 1775061172652
+model_id: m-ef8f4af30d6a44af98ab77b8147798d6
+model_type: null
+name: model
+source_run_id: 8d7073705de34a1492d63a26e173f505
+status: 2
+status_message: null

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Churn Prediction System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result.high-risk {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            color: #c62828;
+        }
+
+        .result.low-risk {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            color: #2e7d32;
+        }
+
+        .risk-score {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stat-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .stat-box .value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-box .label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .badge.success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .badge.warning {
+            background: #ff9800;
+            color: white;
+        }
+
+        .badge.danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .info-section {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .info-section h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .info-item .label {
+            font-weight: 500;
+            color: #333;
+            margin: 0;
+        }
+
+        .info-item .value {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Churn Prediction System</h1>
+            <p>Real-time customer churn prediction for e-commerce</p>
+        </header>
+
+        <div class="content">
+            <!-- Prediction Form -->
+            <div class="card">
+                <h2>📊 Make Prediction</h2>
+
+                <form id="predictionForm">
+                    <div class="form-group">
+                        <label for="customerId">Customer ID *</label>
+                        <input type="text" id="customerId" placeholder="e.g., CUST001" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="accountAge">Account Age (days) *</label>
+                        <input type="number" id="accountAge" min="0" placeholder="e.g., 90" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recency">Recency (days since last purchase) *</label>
+                        <input type="number" id="recency" min="0" placeholder="e.g., 15" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="frequency">Purchase Frequency (count) *</label>
+                        <input type="number" id="frequency" min="0" placeholder="e.g., 25" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="monetary">Monetary Value ($) *</label>
+                        <input type="number" id="monetary" min="0" step="0.01" placeholder="e.g., 1500.00" required>
+                    </div>
+
+                    <button type="submit">🚀 Get Prediction</button>
+                </form>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Processing...</p>
+                </div>
+
+                <div class="result" id="result"></div>
+            </div>
+
+            <!-- System Info -->
+            <div class="card">
+                <h2>ℹ️ System Information</h2>
+
+                <div class="info-section">
+                    <h3>Model Details</h3>
+                    <div class="info-item">
+                        <span class="label">Model Name:</span>
+                        <span class="value">XGBoost v1.0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Algorithm:</span>
+                        <span class="value">Gradient Boosting</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Version:</span>
+                        <span class="value">1.0.0</span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>Performance Metrics</h3>
+                    <div class="info-item">
+                        <span class="label">ROC-AUC:</span>
+                        <span class="value">0.841</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">F1-Score:</span>
+                        <span class="value">0.678</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Precision:</span>
+                        <span class="value">0.752</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Recall:</span>
+                        <span class="value">0.618</span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>Server Status</h3>
+                    <div class="info-item">
+                        <span class="label">Status:</span>
+                        <span class="value"><span class="badge success">🟢 ONLINE</span></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Host:</span>
+                        <span class="value">localhost:8000</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Cache:</span>
+                        <span class="value">Redis</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="card">
+            <h2>📈 API Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="value" id="totalRequests">0</div>
+                    <div class="label">Total Requests</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value" id="avgConfidence">0%</div>
+                    <div class="label">Avg Confidence</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value" id="highRiskCount">0</div>
+                    <div class="label">High Risk Cases</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value" id="lowRiskCount">0</div>
+                    <div class="label">Low Risk Cases</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let stats = {
+            totalRequests: 0,
+            highRiskCount: 0,
+            lowRiskCount: 0,
+            confidenceScores: []
+        };
+
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const customerId = document.getElementById('customerId').value;
+            const accountAge = parseFloat(document.getElementById('accountAge').value);
+            const recency = parseFloat(document.getElementById('recency').value);
+            const frequency = parseFloat(document.getElementById('frequency').value);
+            const monetary = parseFloat(document.getElementById('monetary').value);
+
+            // Show loading
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('result').classList.remove('show');
+
+            // Call backend API
+            let churnProbability, churnPrediction, confidence, riskLevel;
+            try {
+                const response = await fetch('http://localhost:8000/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customerId: customerId,
+                        accountAge: accountAge,
+                        recency: recency,
+                        frequency: frequency,
+                        monetary: monetary
+                    })
+                });
+                if (!response.ok) throw new Error('API Error: ' + response.statusText);
+                const data = await response.json();
+                churnProbability = data.churnProbability;
+                churnPrediction = data.churnPrediction;
+                confidence = data.confidence;
+                riskLevel = churnPrediction === 1 ? 'HIGH' : 'LOW';
+            } catch (error) {
+                console.error(error);
+                alert("Failed to connect to backend API! Make sure deploy.py is running on port 8000.");
+                document.getElementById('loading').classList.remove('show');
+                return;
+            }
+
+            // Update stats
+            stats.totalRequests++;
+            stats.confidenceScores.push(confidence);
+            if (churnPrediction === 1) {
+                stats.highRiskCount++;
+            } else {
+                stats.lowRiskCount++;
+            }
+
+            const resultClass = churnPrediction === 1 ? 'high-risk' : 'low-risk';
+            const resultIcon = churnPrediction === 1 ? '🔴' : '🟢';
+            const badgeClass = churnPrediction === 1 ? 'danger' : 'success';
+
+            const resultHTML = `
+                <p>${resultIcon} <strong>${riskLevel} CHURN RISK</strong></p>
+                <div class="risk-score">${(churnProbability * 100).toFixed(1)}%</div>
+                <p>Confidence: <strong>${(confidence * 100).toFixed(1)}%</strong></p>
+                <span class="badge ${badgeClass}">${riskLevel} RISK</span>
+            `;
+
+            const resultElement = document.getElementById('result');
+            resultElement.innerHTML = resultHTML;
+            resultElement.className = `result show ${resultClass}`;
+
+            // Update statistics
+            updateStatistics();
+
+            // Hide loading
+            document.getElementById('loading').classList.remove('show');
+
+            // Clear form
+            document.getElementById('predictionForm').reset();
+        });
+
+        function updateStatistics() {
+            document.getElementById('totalRequests').textContent = stats.totalRequests;
+            document.getElementById('highRiskCount').textContent = stats.highRiskCount;
+            document.getElementById('lowRiskCount').textContent = stats.lowRiskCount;
+
+            if (stats.confidenceScores.length > 0) {
+                const avgConfidence = (stats.confidenceScores.reduce((a, b) => a + b) / stats.confidenceScores.length * 100).toFixed(0);
+                document.getElementById('avgConfidence').textContent = avgConfidence + '%';
+            }
+        }
+    </script>
+</body>
+
+</html>

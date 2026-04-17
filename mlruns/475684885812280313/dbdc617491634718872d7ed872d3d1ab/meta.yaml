@@ -1,0 +1,14 @@
+artifact_uri: file:C:/Users/kaush/OneDrive/Documents/GitHub/New_Churn/mlruns/475684885812280313/dbdc617491634718872d7ed872d3d1ab/artifacts
+end_time: 1775061739332
+entry_point_name: ''
+experiment_id: '475684885812280313'
+lifecycle_stage: active
+run_id: dbdc617491634718872d7ed872d3d1ab
+run_name: ensemble_2026-04-01T22:12:07.784592
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1775061728163
+status: 3
+tags: []
+user_id: kaush
