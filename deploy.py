@@ -11,7 +11,12 @@ import joblib
 import glob
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -31,6 +36,22 @@ app.add_middleware(
 # Global variables for model and reference data
 MODEL = None
 REFERENCE_DATA = None
+
+def send_slack_notification(customer_id: str, risk_score: float, confidence: float):
+    webhook_url = os.environ.get("SLACK_WEBHOOK_URL")
+    if not webhook_url:
+        logger.warning("SLACK_WEBHOOK_URL is not set. Skipping Slack notification.")
+        return
+        
+    try:
+        message = {
+            "text": f"🚨 *High Risk Churn Alert* 🚨\n*Customer ID*: {customer_id}\n*Risk Score*: {risk_score:.2%}\n*Confidence*: {confidence:.2%}"
+        }
+        response = requests.post(webhook_url, json=message, timeout=5)
+        response.raise_for_status()
+        logger.info(f"Slack notification sent for {customer_id}")
+    except Exception as e:
+        logger.error(f"Failed to send Slack notification: {e}")
 
 class PredictionRequest(BaseModel):
     customerId: str
@@ -61,6 +82,13 @@ def load_assets():
         logger.warning(f"Could not load sample_customers.csv: {e}")
         
     REFERENCE_DATA = df
+
+@app.get("/")
+def read_root():
+    if os.path.exists("index.html"):
+        return FileResponse("index.html")
+    else:
+        raise HTTPException(status_code=404, detail="Frontend file not found.")
 
 @app.post("/predict")
 def predict(request: PredictionRequest):
@@ -101,6 +129,9 @@ def predict(request: PredictionRequest):
         prediction = 1 if churn_prob > 0.5 else 0
         confidence = abs(churn_prob - 0.5) * 2
         
+        if prediction == 1:
+            send_slack_notification(request.customerId, churn_prob, confidence)
+            
         return {
             "churnProbability": churn_prob,
             "churnPrediction": prediction,
@@ -113,4 +144,5 @@ def predict(request: PredictionRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("deploy:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("deploy:app", host="0.0.0.0", port=port)

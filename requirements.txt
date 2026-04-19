@@ -80,7 +80,7 @@ watchtower  # CloudWatch integration
 # Data Drift Detection
 # ================================
 river  # Replaces scikit-multiflow (abandoned, no Py3.11 support)
-alibi-detect  # 0.11.0 numba dep requires Py<3.11
+# alibi-detect  # 0.11.0 numba dep requires Py<3.11
 
 # ================================
 # Utilities & Configuration

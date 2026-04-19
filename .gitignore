@@ -1,3 +1,5 @@
 mlruns/
 artifacts/
 kauvenv/
+.env
+.venv

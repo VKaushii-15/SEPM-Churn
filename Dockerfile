@@ -54,8 +54,9 @@ COPY models/         ./models/
 # Copy pre-trained model artifacts (if any exist)
 COPY artifacts/      ./artifacts/
 
-# Expose ports: FastAPI (8000) & Frontend server (3000)
-EXPOSE 8000 3000
+# Default port if not supplied by Heroku
+ENV PORT=8000
+EXPOSE $PORT
 
-# Default: launch both the Frontend server (bg) and FastAPI prediction server (fg)
-CMD ["bash", "-c", "python server.py & uvicorn deploy:app --host 0.0.0.0 --port 8000"]
+# Start FastAPI server
+CMD ["sh", "-c", "uvicorn deploy:app --host 0.0.0.0 --port ${PORT:-8000}"]
